@@ -1,20 +1,20 @@
 # Copyright 2017 Eficent Business and IT Consulting Services S.L.
+# Copyright 2019 JARSA Sistemas S.A. de C.V.
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 {
     "name": "MRP Production Request",
     "summary": "Allows you to use Manufacturing Request as a previous "
                "step to Manufacturing Orders for better manufacture "
                "planification.",
-    "version": "11.0.1.0.0",
+    "version": "12.0.1.0.0",
     "development_status": "Mature",
     "maintainers": ['lreficent'],
     "category": "Manufacturing",
     "website": "https://github.com/OCA/manufacture",
     "author": "Eficent,"
+              "JARSA Sistemas,"
               "Odoo Community Association (OCA)",
     "license": "AGPL-3",
-    "application": False,
-    "installable": True,
     "depends": ["mrp", "stock_available_unreserved"],
     "data": [
         "security/mrp_production_request_security.xml",

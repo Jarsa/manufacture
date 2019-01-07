@@ -122,6 +122,7 @@ Contributors
 
 * Lois Rilo Antelo <lois.rilo@eficent.com>
 * Jordi Ballester <jordi.ballester@eficent.com>
+* Oscar Garza <oscar.garza@jarsa.com.mx>
 
 Maintainers
 ~~~~~~~~~~~
