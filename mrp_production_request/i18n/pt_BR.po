@@ -27,12 +27,12 @@ msgid ""
 msgstr ""
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_form
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_form
 msgid "Approve"
 msgstr "Aprovar"
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
 #: selection:mrp.production.request,state:0
 msgid "Approved"
 msgstr "Aprovado"
@@ -43,12 +43,12 @@ msgid "Approver"
 msgstr "Aprovador"
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
 msgid "Assigned to"
 msgstr "Atribuído à"
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
 msgid "Assigned to me"
 msgstr ""
 
@@ -64,12 +64,12 @@ msgid "Bottle Neck Factor"
 msgstr ""
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.mrp_production_request_create_mo_view
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.mrp_production_request_create_mo_view
 msgid "Cancel"
 msgstr "Cancelar"
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
 #: selection:mrp.production.request,state:0
 msgid "Cancelled"
 msgstr "Cancelado"
@@ -98,7 +98,7 @@ msgid "Company"
 msgstr "Empresa"
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.mrp_production_request_create_mo_view
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.mrp_production_request_create_mo_view
 msgid "Compute lines"
 msgstr ""
 
@@ -110,13 +110,13 @@ msgid ""
 msgstr ""
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.mrp_production_request_create_mo_view
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.mrp_production_request_create_mo_view
 msgid "Create MO"
 msgstr ""
 
 #. module: mrp_production_request
 #: model:ir.actions.act_window,name:mrp_production_request.mrp_production_request_create_mo_action
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_form
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_form
 msgid "Create Manufacturing Order"
 msgstr "Criar ordem de produção"
 
@@ -162,20 +162,20 @@ msgid "Display Name"
 msgstr "Nome para Mostrar"
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_form
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_form
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
 #: selection:mrp.production.request,state:0
 msgid "Done"
 msgstr "Feito"
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
 #: selection:mrp.production.request,state:0
 msgid "Draft"
 msgstr "Provisório"
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_form
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_form
 msgid "Extra information"
 msgstr ""
 
@@ -231,7 +231,7 @@ msgid "MO's Count"
 msgstr ""
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_form
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_form
 msgid "MOs"
 msgstr ""
 
@@ -241,7 +241,7 @@ msgid "Manager"
 msgstr "Gerente"
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.mrp_production_request_create_mo_view
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.mrp_production_request_create_mo_view
 msgid "Manufacture Request status"
 msgstr ""
 
@@ -251,14 +251,14 @@ msgid "Manufacturing Order"
 msgstr "Ordem de Produção"
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.mrp_production_request_create_mo_view
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.mrp_production_request_create_mo_view
 msgid "Manufacturing Order:"
 msgstr ""
 
 #. module: mrp_production_request
 #: model:ir.model.fields,field_description:mrp_production_request.field_mrp_production_request_mrp_production_ids
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_form
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_form
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
 msgid "Manufacturing Orders"
 msgstr ""
 
@@ -268,20 +268,20 @@ msgstr ""
 #: model:ir.model.fields,field_description:mrp_production_request.field_product_product_mrp_production_request
 #: model:ir.model.fields,field_description:mrp_production_request.field_product_template_mrp_production_request
 #: model:ir.module.category,name:mrp_production_request.module_category_mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_form
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_form
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
 msgid "Manufacturing Request"
 msgstr ""
 
 #. module: mrp_production_request
 #: model:ir.actions.act_window,name:mrp_production_request.mrp_production_request_action
 #: model:ir.ui.menu,name:mrp_production_request.menu_mrp_production_request_act
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_tree
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_tree
 msgid "Manufacturing Requests"
 msgstr ""
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
 msgid "Manufacturing Requests not done or cancelled."
 msgstr ""
 
@@ -301,7 +301,7 @@ msgid "Mrp Production Request Create Mo"
 msgstr ""
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
 msgid "My requests"
 msgstr ""
 
@@ -316,7 +316,7 @@ msgid "Orderpoint"
 msgstr ""
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
 msgid "Pending Qty"
 msgstr ""
 
@@ -421,48 +421,48 @@ msgid "Refresh Quantities"
 msgstr ""
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_form
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_form
 msgid "Reject"
 msgstr "Rejeitar"
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_form
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_form
 msgid "Request approval"
 msgstr "Aprovação da requisição"
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
 msgid "Request is approved"
 msgstr "Requisição está aprovada"
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
 msgid "Request is cancelled"
 msgstr ""
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
 msgid "Request is done"
 msgstr ""
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
 msgid "Request is to be approved"
 msgstr "Requisição deve ser aprovada"
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
 msgid "Request with pending quantity"
 msgstr ""
 
 #. module: mrp_production_request
 #: model:ir.model.fields,field_description:mrp_production_request.field_mrp_production_request_requested_by
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
 msgid "Requested by"
 msgstr "Requisitado por"
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
 msgid "Requested by me"
 msgstr ""
 
@@ -472,7 +472,7 @@ msgid "Required Quantity"
 msgstr ""
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_form
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_form
 msgid "Reset"
 msgstr "Resetar"
 
@@ -482,17 +482,17 @@ msgid "Routing"
 msgstr ""
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
 msgid "Search Manufacturing Request"
 msgstr ""
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.mrp_production_request_create_mo_view
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.mrp_production_request_create_mo_view
 msgid "Select event to register"
 msgstr ""
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
 msgid "Source"
 msgstr "Origem"
 
@@ -544,7 +544,7 @@ msgid ""
 msgstr ""
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
 msgid "To Approve"
 msgstr "Para aprovação"
 
@@ -554,17 +554,17 @@ msgid "To Be Approved"
 msgstr ""
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
 msgid "To Do"
 msgstr ""
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
 msgid "Unassigned"
 msgstr "Não atribuído"
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
 msgid "Unassigned Request"
 msgstr "Requisição não atribuída"
 
@@ -575,7 +575,7 @@ msgid "Unit of Measure"
 msgstr "Unidade de medida"
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
 msgid "Unread Messages"
 msgstr "Mensagens não lidas"
 
@@ -615,7 +615,7 @@ msgid "mrp.production.request.create.mo.line"
 msgstr ""
 
 #. module: mrp_production_request
-#: model:ir.ui.view,arch_db:mrp_production_request.mrp_production_request_create_mo_view
+#: model_terms:ir.ui.view,arch_db:mrp_production_request.mrp_production_request_create_mo_view
 msgid "or"
 msgstr "ou"
 

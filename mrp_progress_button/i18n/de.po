@@ -24,6 +24,6 @@ msgid "Manufacturing Order"
 msgstr "Fertigungsautrag"
 
 #. module: mrp_progress_button
-#: model:ir.ui.view,arch_db:mrp_progress_button.mrp_production_progress_button_form_view
+#: model_terms:ir.ui.view,arch_db:mrp_progress_button.mrp_production_progress_button_form_view
 msgid "Mark As Started"
 msgstr ""
