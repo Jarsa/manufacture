@@ -30,7 +30,7 @@ msgstr "Acción Requerida"
 #. module: mrp_production_request
 #: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_form
 msgid "Approve"
-msgstr "Aprovar"
+msgstr "Aprobar"
 
 #. module: mrp_production_request
 #: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
@@ -615,7 +615,7 @@ msgstr "No se ha encontrado una lista de materiales para el producto %s. Por fav
 #. module: mrp_production_request
 #: model_terms:ir.ui.view,arch_db:mrp_production_request.view_mrp_production_request_search
 msgid "To Approve"
-msgstr "Por aprovar"
+msgstr "Por aprobar"
 
 #. module: mrp_production_request
 #: selection:mrp.production.request,state:0
