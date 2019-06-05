@@ -130,6 +130,7 @@
         <field name="model">mrp.production.request</field>
         <field name="arch" type="xml">
             <search string="Search Manufacturing Request">
+                <field name="product_id"/>
                 <field name="name" string="Manufacturing Request"/>
                 <field name="mrp_production_ids" string="Manufacturing Orders"/>
                 <field name="requested_by"/>
