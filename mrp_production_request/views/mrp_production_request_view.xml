@@ -121,6 +121,7 @@
                 <field name="origin"/>
                 <field name="date_planned_start"/>
                 <field name="state"/>
+                <button name="button_approved"  type="object" icon="fa-check" states="draft,to_approve"/>
             </tree>
       </field>
     </record>
