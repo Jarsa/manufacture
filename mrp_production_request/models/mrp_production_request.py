@@ -196,6 +196,9 @@ class MrpProductionRequest(models.Model):
         vals = self._create_sequence(vals)
         res = super(MrpProductionRequest, self).create(vals)
         res._subscribe_assigned_user(vals)
+        res.move_dest_ids.write({
+            'procure_method': 'make_to_stock',
+        })
         return res
 
     @api.multi
