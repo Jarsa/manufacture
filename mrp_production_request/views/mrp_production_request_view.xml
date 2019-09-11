@@ -23,9 +23,6 @@
                 <button name="%(mrp_production_request_create_mo_action)d"
                         states="approved"
                         string="Create Manufacturing Order" type="action"/>
-                <button name="button_done" states="approved"
-                        string="Done" type="object" class="oe_highlight"
-                        groups="mrp_production_request.group_mrp_production_request_manager"/>
                 <button name="button_cancel" states="to_approve,approved"
                         string="Reject" type="object"
                         groups="mrp_production_request.group_mrp_production_request_manager"/>
