@@ -110,7 +110,7 @@ class MrpProductionRequestCreateMo(models.TransientModel):
             'routing_id': request_id.routing_id.id,
             'date_planned_start': self.date_planned_start,
             'date_planned_finished': request_id.date_planned_finished,
-            'procurement_group_id': request_id.procurement_group_id.id,
+            'procurement_group_id': False,
             'propagate': request_id.propagate,
             'company_id': request_id.company_id.id,
         }
