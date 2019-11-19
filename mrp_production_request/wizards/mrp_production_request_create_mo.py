@@ -35,6 +35,9 @@ class MrpProductionRequestCreateMo(models.TransientModel):
     def compute_product_line_ids(self):
         self.product_line_ids.unlink()
         res = self._prepare_lines()
+        if not res[1]:
+            raise UserError(_(
+                "The Bill of Materials has not components"))
         product_lines = res[1]
         for line in product_lines:
             self.env['mrp.production.request.create.mo.line'].create(
