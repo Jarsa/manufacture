@@ -37,7 +37,8 @@ class MrpProductionRequestCreateMo(models.TransientModel):
         res = self._prepare_lines()
         if not res[1]:
             raise UserError(_(
-                "The Bill of Materials has not components"))
+                "The Bill of Materials %s has not components") % (
+                    self.bom_id.product_tmpl_id.display_name))
         product_lines = res[1]
         for line in product_lines:
             self.env['mrp.production.request.create.mo.line'].create(
