@@ -142,6 +142,9 @@
                 decoration-info="state in ('draft','to_approve')"
                 decoration-muted="state in ('cancel')"
             >
+                <header>
+                    <button string="Approve" name="button_approved" type="object" />
+                </header>
                 <field name="name" />
                 <field name="product_id" />
                 <field name="requested_by" />
