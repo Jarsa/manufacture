@@ -14,7 +14,7 @@
     "installable": True,
     "depends": ["mrp"],
     "data": [
-        "views/mrp_production_view.xml",
         "security/res_groups.xml",
+        "views/mrp_production_view.xml",
     ],
 }
