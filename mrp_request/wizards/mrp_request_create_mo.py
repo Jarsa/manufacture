@@ -116,10 +116,18 @@ class MrpProductionRequestCreateMo(models.TransientModel):
     def create_mo(self):
         self.ensure_one()
         vals = self._prepare_manufacturing_order()
-        mo = self.env["mrp.production"].create(vals)
-        mo._onchange_move_raw()
-        mo._onchange_move_finished()
-        mo._onchange_workorder_ids()
+        mo = self.env["mrp.production"].with_context(import_file=True).create(vals)
+        # Define destination location for the MO finished move line, to avoid to duplicate the move line
+        # Without this the MO finished move line in the SFP is duplicated
+        request = self.mrp_request_id
+        mo_origin_move = request.procurement_group_id.mapped("stock_move_ids").filtered(
+            lambda m: m.location_id == request.location_dest_id
+            and m.state != "cancel"
+            and m.product_id == request.product_id
+        )
+        if mo_origin_move:
+            mo.move_finished_ids.filtered(
+                lambda m: m.product_id == request.product_id).write({"move_dest_ids": [(4, mo_origin_move.id)]})
         # Open resulting MO:
         action = self.env.ref("mrp.mrp_production_action").read()[0]
         res = self.env.ref("mrp.mrp_production_form_view")
