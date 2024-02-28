@@ -240,9 +240,16 @@ class MrpProductionRequest(models.Model):
             boms = self.env["mrp.bom"]._bom_find(
                 products=self.product_id,
                 company_id=self.company_id.id,
-                picking_type=self.picking_type_id,
             )
             self.bom_id = boms.get(self.product_id, False)
+            if self.bom_id and self.bom_id.picking_type_id:
+                self.picking_type_id = self.bom_id.picking_type_id
+
+    @api.onchange("picking_type_id")
+    def _onchange_picking_type_id(self):
+        if self.picking_type_id:
+            self.location_src_id = self.picking_type_id.default_location_src_id
+            self.location_dest_id = self.picking_type_id.default_location_dest_id
 
     def _subscribe_assigned_user(self, vals):
         self.ensure_one()
