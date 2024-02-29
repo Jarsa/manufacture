@@ -127,7 +127,10 @@ class MrpProductionRequestCreateMo(models.TransientModel):
         )
         if mo_origin_move:
             mo.move_finished_ids.filtered(
-                lambda m: m.product_id == request.product_id).write({"move_dest_ids": [(4, mo_origin_move.id)]})
+                lambda m: m.product_id == request.product_id).write({
+                    "move_dest_ids": [(4, move.id) for move in mo_origin_move],
+                    "propagate_cancel": False,
+                })
         # Open resulting MO:
         action = self.env.ref("mrp.mrp_production_action").read()[0]
         res = self.env.ref("mrp.mrp_production_form_view")
