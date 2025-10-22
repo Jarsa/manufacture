@@ -76,14 +76,14 @@ class StockRule(models.Model):
             )
 
         existing_request = self.env["mrp.request"].search(
-             [
+            [
                 ("product_id", "=", product_id.id),
                 ("state", "in", ["draft","to_approve"]),
                 ("product_uom_id", "=",product_uom.id),
                 ("location_dest_id", "=",location_id.id),
                 ("bom_id", "=",bom.id),
                 ("company_id", "=", company_id.id),
-            ]
+            ], limit=1
         )
         if not existing_request:
             request = request_obj_sudo.create(
@@ -102,7 +102,7 @@ class StockRule(models.Model):
         else:
             vals_to_update = {}
 
-            vals_to_update['product_qty'] = product_qty
+            vals_to_update['product_qty'] = existing_request.product_qty + product_qty
 
             current_origin = existing_request.origin or ""
             origins = current_origin.split(', ')
