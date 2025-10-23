@@ -80,7 +80,6 @@ class StockRule(models.Model):
                 ("product_id", "=", product_id.id),
                 ("state", "in", ["draft","to_approve"]),
                 ("product_uom_id", "=",product_uom.id),
-                ("location_dest_id", "=",location_id.id),
                 ("bom_id", "=",bom.id),
                 ("company_id", "=", company_id.id),
             ], limit=1
@@ -99,6 +98,7 @@ class StockRule(models.Model):
                     bom,
                 )
             )
+            request.location_dest_id = request.picking_type_id.default_location_dest_id
         else:
             vals_to_update = {}
 
