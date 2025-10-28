@@ -107,7 +107,6 @@ class MrpProductionRequest(models.Model):
     product_tmpl_id = fields.Many2one(
         comodel_name="product.template",
         string="Product Template",
-        related="product_id.product_tmpl_id",
     )
     product_qty = fields.Float(
         string="Required Quantity",
@@ -121,7 +120,6 @@ class MrpProductionRequest(models.Model):
         comodel_name="uom.uom",
         string="Unit of Measure",
         readonly=False,
-        related="product_id.uom_id",
         domain="[('category_id', '=', category_uom_id)]",
     )
     category_uom_id = fields.Many2one(related="product_uom_id.category_id")
