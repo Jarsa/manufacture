@@ -45,6 +45,7 @@ class StockRule(models.Model):
         procurement_group = values.get("group_id")
         if procurement_group:
             data["procurement_group_id"] = procurement_group.id
+        data["product_tmpl_id"] = product_id.product_tmpl_id.id
         return data
 
     def _need_production_request(self, product_id, action="manufacture"):
