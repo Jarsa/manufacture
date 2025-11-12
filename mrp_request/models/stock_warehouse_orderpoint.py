@@ -9,11 +9,13 @@ class Orderpoint(models.Model):
 
     def _quantity_in_progress(self):
         res = super()._quantity_in_progress()
-        mrp_requests = self.env["mrp.request"].search(
-            [("state", "not in", ("done", "cancel")), ("orderpoint_id", "in", self.ids)]
-        )
-        for rec in mrp_requests:
-            res[rec.orderpoint_id.id] += rec.product_uom_id._compute_quantity(
-                rec.pending_qty, rec.orderpoint_id.product_uom, round=False
-            )
+        for orderpoint in self.filtered(lambda x: x.id):
+            mrp_requests = self.env['mrp.request'].search([
+                ('orderpoint_id', '=', orderpoint.id),
+                ('state', 'in', ['draft', 'confirmed'])
+            ])
+            for rec in mrp_requests:
+                res[orderpoint.id] += rec.product_uom_id._compute_quantity(
+                    rec.product_qty, orderpoint.product_uom
+                )
         return res
