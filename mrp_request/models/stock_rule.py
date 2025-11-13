@@ -76,21 +76,45 @@ class StockRule(models.Model):
                 % (product_id.display_name,)
             )
 
-        # create the MR as SUPERUSER because the current user may not
-        # have the rights to do it (mto product launched by a sale for example)
-        request = request_obj_sudo.create(
-            self._prepare_mrp_request(
-                product_id,
-                product_qty,
-                product_uom,
-                location_id,
-                name,
-                origin,
-                company_id,
-                values,
-                bom,
-            )
+        existing_request = self.env["mrp.request"].search(
+            [
+                ("product_id", "=", product_id.id),
+                ("state", "in", ["draft","to_approve"]),
+                ("product_uom_id", "=",product_uom.id),
+                ("bom_id", "=",bom.id),
+                ("company_id", "=", company_id.id),
+            ], limit=1
         )
+        if not existing_request:
+            request = request_obj_sudo.create(
+                self._prepare_mrp_request(
+                    product_id,
+                    product_qty,
+                    product_uom,
+                    location_id,
+                    name,
+                    origin,
+                    company_id,
+                    values,
+                    bom,
+                )
+            )
+            request.location_dest_id = request.picking_type_id.default_location_dest_id
+        else:
+            vals_to_update = {}
+
+            vals_to_update['product_qty'] = existing_request.product_qty + product_qty
+
+            current_origin = existing_request.origin or ""
+            origins = current_origin.split(', ')
+
+            if origin and origin not in origins:
+                origins.append(origin)
+                vals_to_update['origin'] = ", ".join(origins)
+
+            existing_request.write(vals_to_update)
+            request = existing_request
+
         origin_production = (
             values.get("move_dest_ids")
             and values["move_dest_ids"][0].raw_material_production_id
