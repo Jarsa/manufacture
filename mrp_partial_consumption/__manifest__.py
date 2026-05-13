@@ -3,7 +3,7 @@
 {
     "name": "MRP Partial Consumption",
     "summary": "Allows to consume partial quantities in manufacturing orders",
-    "version": "17.0.1.0.0",
+    "version": "18.0.1.0.0",
     "development_status": "Alpha",
     "maintainers": ["alan196"],
     "category": "Manufacturing",
@@ -11,7 +11,6 @@
     "author": "Jarsa,Odoo Community Association (OCA)",
     "license": "LGPL-3",
     "application": False,
-    "installable": True,
     "depends": ["mrp"],
     "data": [
         "security/res_groups.xml",

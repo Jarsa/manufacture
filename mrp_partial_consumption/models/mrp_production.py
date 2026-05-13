@@ -11,4 +11,5 @@ class MrpProduction(models.Model):
         to_consume = self.move_raw_ids.move_line_ids.filtered(
             lambda x: x.state not in ("done", "cancel") and x.quantity > 0
         )
+        to_consume.picked = True
         to_consume.mapped("move_id")._action_done()
