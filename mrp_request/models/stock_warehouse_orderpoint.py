@@ -4,18 +4,24 @@
 from odoo import models
 
 
-class Orderpoint(models.Model):
+class StockWarehouseOrderpoint(models.Model):
     _inherit = "stock.warehouse.orderpoint"
 
     def _quantity_in_progress(self):
+        """Consider the pending quantity of open manufacturing requests as
+        quantity in progress, so the replenishment does not propose it
+        again."""
         res = super()._quantity_in_progress()
-        for orderpoint in self.filtered(lambda x: x.id):
-            mrp_requests = self.env['mrp.request'].search([
-                ('orderpoint_id', '=', orderpoint.id),
-                ('state', 'in', ['draft', 'confirmed'])
-            ])
-            for rec in mrp_requests:
-                res[orderpoint.id] += rec.product_uom_id._compute_quantity(
-                    rec.product_qty, orderpoint.product_uom
-                )
+        request_groups = self.env["mrp.request"]._read_group(
+            [
+                ("orderpoint_id", "in", self.ids),
+                ("state", "not in", ["done", "cancel"]),
+            ],
+            ["orderpoint_id", "product_uom_id"],
+            ["pending_qty:sum"],
+        )
+        for orderpoint, uom, pending_qty_sum in request_groups:
+            res[orderpoint.id] += uom._compute_quantity(
+                pending_qty_sum, orderpoint.product_uom, round=False
+            )
         return res

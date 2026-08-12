@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<templates id="template">
+    <t
+        t-name="mrp_request.ForecastedDetails"
+        t-inherit="stock.ForecastedDetails"
+        t-inherit-mode="extension"
+    >
+        <xpath expr="//tr[@name='draft_picking_in']" position="after">
+            <tr
+                t-if="currentProduct.mrp_request_qty and currentProduct.mrp_request_qty.in"
+                name="mrp_request_in"
+                t-attf-class="#{multipleProducts and 'collapse show' or ''} collapseGroup_#{line.product.id}"
+            >
+                <td />
+                <td>Confirmed Manufacturing Requests</td>
+                <td class="text-end text-success">
+                    <t t-out="_formatFloat(currentProduct.mrp_request_qty.in)" />
+                    <t t-out="line.uom_id.display_name" />
+                </td>
+            </tr>
+        </xpath>
+    </t>
+</templates>
