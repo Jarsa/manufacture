@@ -12,9 +12,10 @@ class StockMove(models.Model):
     )
 
     @api.model_create_multi
-    def create(self, vals):
-        if "production_id" in vals:
-            production = self.env["mrp.production"].browse(vals["production_id"])
-            if production.mrp_request_id:
-                vals["propagate_cancel"] = False
-        return super().create(vals)
+    def create(self, vals_list):
+        for vals in vals_list:
+            if "production_id" in vals:
+                production = self.env["mrp.production"].browse(vals["production_id"])
+                if production.mrp_request_id:
+                    vals["propagate_cancel"] = False
+        return super().create(vals_list)

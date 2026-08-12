@@ -1,7 +1,7 @@
 # Copyright 2017-19 ForgeFlow S.L.
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 from odoo.exceptions import UserError
 
 
@@ -40,7 +40,9 @@ class MrpProductionRequestCreateMo(models.TransientModel):
     def _get_mo_qty(self):
         """Propose a qty to create a MO available to produce."""
         for rec in self:
-            bottle_neck = min(rec.product_line_ids.mapped("bottle_neck_factor"))
+            bottle_neck = min(
+                rec.product_line_ids.mapped("bottle_neck_factor"), default=1
+            )
             bottle_neck = max(min(1, bottle_neck), 0)
             rec.mo_qty = rec.pending_qty * bottle_neck
 
@@ -64,11 +66,11 @@ class MrpProductionRequestCreateMo(models.TransientModel):
     @api.model
     def default_get(self, fields):
         rec = super().default_get(fields)
-        active_ids = self._context.get("active_ids")
-        active_model = self._context.get("active_model")
+        active_ids = self.env.context.get("active_ids")
+        active_model = self.env.context.get("active_model")
         if not active_ids:
             raise UserError(
-                _(
+                self.env._(
                     "Programming error: wizard action executed without "
                     "active_ids in context."
                 )
@@ -107,7 +109,7 @@ class MrpProductionRequestCreateMo(models.TransientModel):
             "picking_type_id": request_id.picking_type_id.id,
             "date_start": self.date_start,
             "date_finished": self.date_finished,
-            "procurement_group_id": request_id.procurement_group_id.id,
+            "reference_ids": [(6, 0, request_id.reference_ids.ids)],
             "propagate_cancel": request_id.propagate,
             "company_id": request_id.company_id.id,
         }
@@ -116,20 +118,23 @@ class MrpProductionRequestCreateMo(models.TransientModel):
         self.ensure_one()
         vals = self._prepare_manufacturing_order()
         mo = self.env["mrp.production"].with_context(import_file=True).create(vals)
-        # Define destination location for the MO finished move line, to avoid to duplicate the move line
-        # Without this the MO finished move line in the SFP is duplicated
+        # Set the destination moves on the MO finished move line, otherwise
+        # the MO finished move line in the SFP is duplicated.
         request = self.mrp_request_id
-        mo_origin_move = request.procurement_group_id.mapped("stock_move_ids").filtered(
+        mo_origin_move = request.reference_ids.move_ids.filtered(
             lambda m: m.location_id == request.location_dest_id
             and m.state != "cancel"
             and m.product_id == request.product_id
         )
         if mo_origin_move:
             mo.move_finished_ids.filtered(
-                lambda m: m.product_id == request.product_id).write({
+                lambda m: m.product_id == request.product_id
+            ).write(
+                {
                     "move_dest_ids": [(4, move.id) for move in mo_origin_move],
                     "propagate_cancel": False,
-                })
+                }
+            )
         # Open resulting MO:
         action = self.env.ref("mrp.mrp_production_action").read()[0]
         res = self.env.ref("mrp.mrp_production_form_view")
@@ -148,16 +153,12 @@ class MrpProductionRequestCreateMoLine(models.TransientModel):
             product_available = rec.product_id.with_context(
                 location=rec.location_id.id
             )._compute_quantities_dict(
-                self._context.get("lot_id"),
-                self._context.get("owner_id"),
-                self._context.get("package_id"),
-                self._context.get("from_date"),
-                self._context.get("to_date"),
-            )[
-                rec.product_id.id
-            ][
-                "free_qty"
-            ]
+                self.env.context.get("lot_id"),
+                self.env.context.get("owner_id"),
+                self.env.context.get("package_id"),
+                self.env.context.get("from_date"),
+                self.env.context.get("to_date"),
+            )[rec.product_id.id]["free_qty"]
             res = rec.product_id.product_tmpl_id.uom_id._compute_quantity(
                 product_available, rec.product_uom_id
             )
@@ -165,8 +166,9 @@ class MrpProductionRequestCreateMoLine(models.TransientModel):
 
     def _compute_bottle_neck_factor(self):
         for rec in self:
-            if rec.product_qty:
-                rec.bottle_neck_factor = rec.available_qty / rec.product_qty
+            rec.bottle_neck_factor = (
+                rec.available_qty / rec.product_qty if rec.product_qty else 0.0
+            )
 
     product_id = fields.Many2one(
         comodel_name="product.product", string="Product", required=True

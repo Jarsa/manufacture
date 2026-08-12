@@ -1,7 +1,7 @@
 # Copyright 2017-19 ForgeFlow S.L.
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import _, api, fields, models
+from odoo import api, fields, models
 from odoo.exceptions import UserError
 
 
@@ -15,13 +15,20 @@ class MrpProductionRequest(models.Model):
     def _get_default_requested_by(self):
         return self.env.user
 
+    @api.model
+    def _default_picking_type_id(self):
+        return self.env["stock.picking.type"].browse(
+            self.env["mrp.production"]._get_default_picking_type_id(self.env.company.id)
+        )
+
     name = fields.Char(
         default="/",
         required=True,
         readonly=True,
     )
     origin = fields.Char(
-        string="Source Document", readonly=True,
+        string="Source Document",
+        readonly=True,
     )
     requested_by = fields.Many2one(
         comodel_name="res.users",
@@ -38,9 +45,9 @@ class MrpProductionRequest(models.Model):
         readonly=True,
         domain=lambda self: [
             (
-                "groups_id",
+                "all_group_ids",
                 "in",
-                self.env.ref("mrp_request." "group_mrp_request_manager").id,
+                self.env.ref("mrp_request.group_mrp_request_manager").id,
             )
         ],
     )
@@ -87,8 +94,8 @@ class MrpProductionRequest(models.Model):
         copy=False,
         default="draft",
     )
-    procurement_group_id = fields.Many2one(
-        string="Procurement Group", comodel_name="procurement.group", copy=False
+    reference_ids = fields.Many2many(
+        comodel_name="stock.reference", string="References", copy=False
     )
     propagate = fields.Boolean(
         "Propagate cancel and split",
@@ -100,7 +107,7 @@ class MrpProductionRequest(models.Model):
         comodel_name="product.product",
         string="Product",
         required=True,
-        domain=[("type", "in", ["product", "consu"])],
+        domain=[("type", "=", "consu")],
         tracking=True,
         readonly=True,
     )
@@ -120,9 +127,7 @@ class MrpProductionRequest(models.Model):
         comodel_name="uom.uom",
         string="Unit of Measure",
         readonly=False,
-        domain="[('category_id', '=', category_uom_id)]",
     )
-    category_uom_id = fields.Many2one(related="product_uom_id.category_id")
     manufactured_qty = fields.Float(
         string="Quantity in Manufacturing Orders",
         compute="_compute_manufactured_qty",
@@ -157,27 +162,21 @@ class MrpProductionRequest(models.Model):
     location_src_id = fields.Many2one(
         comodel_name="stock.location",
         string="Raw Materials Location",
-        default=lambda self: self.env["stock.location"].browse(
-            self.env["mrp.production"].location_src_id
-        ),
+        default=lambda self: self._default_picking_type_id().default_location_src_id,
         required=True,
         readonly=True,
     )
     location_dest_id = fields.Many2one(
         comodel_name="stock.location",
         string="Finished Products Location",
-        default=lambda self: self.env["stock.location"].browse(
-            self.env["mrp.production"].location_dest_id
-        ),
+        default=lambda self: self._default_picking_type_id().default_location_dest_id,
         required=True,
         readonly=True,
     )
     picking_type_id = fields.Many2one(
         comodel_name="stock.picking.type",
         string="Picking Type",
-        default=lambda self: self.env["stock.picking.type"].browse(
-            self.env["mrp.production"]._get_default_picking_type_id(self.env.company.id)
-        ),
+        default=lambda self: self._default_picking_type_id(),
         required=True,
         readonly=True,
     )
@@ -190,24 +189,26 @@ class MrpProductionRequest(models.Model):
         comodel_name="stock.warehouse.orderpoint", string="Orderpoint"
     )
 
-    _sql_constraints = [
-        (
-            "name_uniq",
-            "unique(name, company_id)",
-            "Reference must be unique per Company!",
-        )
-    ]
+    _name_uniq = models.Constraint(
+        "unique(name, company_id)",
+        "Reference must be unique per Company!",
+    )
 
     @api.model
     def _get_mo_valid_states(self):
         return ["planned", "confirmed", "progress", "done"]
+
+    @api.model
+    def _get_incoming_states(self):
+        """States where the request is considered as incoming quantity."""
+        return ["to_approve", "approved"]
 
     @api.depends("mrp_production_ids", "mrp_production_ids.state", "state")
     def _compute_manufactured_qty(self):
         valid_states = self._get_mo_valid_states()
         for req in self:
             done_mo = req.mrp_production_ids.filtered(
-                lambda mo: mo.state in "done"
+                lambda mo: mo.state == "done"
             ).mapped("product_qty")
             req.done_qty = sum(done_mo)
             valid_mo = req.mrp_production_ids.filtered(
@@ -240,19 +241,17 @@ class MrpProductionRequest(models.Model):
 
     def _subscribe_assigned_user(self, vals):
         self.ensure_one()
-        for val in vals:
-            if "assigned_to" in vals:
-                if val.get("assigned_to"):
-                    self.message_subscribe(
-                        partner_ids=self.assigned_to.mapped("partner_id").ids
-                    )
+        if vals.get("assigned_to"):
+            self.message_subscribe(partner_ids=self.assigned_to.partner_id.ids)
 
     @api.model
-    def _create_sequence(self, vals):
-        for val in vals:
-            if not val.get("name") or val.get("name") == "/":
-                val["name"] = self.env["ir.sequence"].next_by_code("mrp.request") or "/"
-        return vals
+    def _create_sequence(self, vals_list):
+        for vals in vals_list:
+            if not vals.get("name") or vals.get("name") == "/":
+                vals["name"] = (
+                    self.env["ir.sequence"].next_by_code("mrp.request") or "/"
+                )
+        return vals_list
 
     def copy(self, default=None):
         default = dict(default or {})
@@ -260,13 +259,14 @@ class MrpProductionRequest(models.Model):
         return super().copy(default)
 
     @api.model_create_multi
-    def create(self, vals):
+    def create(self, vals_list):
         """Add sequence if name is not defined and subscribe to the thread
         the user assigned to the request."""
-        vals = self._create_sequence(vals)
-        res = super().create(vals)
-        res._subscribe_assigned_user(vals)
-        return res
+        vals_list = self._create_sequence(vals_list)
+        requests = super().create(vals_list)
+        for request, vals in zip(requests, vals_list, strict=True):
+            request._subscribe_assigned_user(vals)
+        return requests
 
     def write(self, vals):
         res = super().write(vals)
@@ -294,7 +294,7 @@ class MrpProductionRequest(models.Model):
             ]
         ):
             raise UserError(
-                _(
+                self.env._(
                     "You cannot reset a manufacturing request if the related "
                     "manufacturing orders are not cancelled."
                 )
@@ -308,7 +308,7 @@ class MrpProductionRequest(models.Model):
     def _check_cancel_allowed(self):
         if any([s == "done" for s in self.mapped("state")]):
             raise UserError(
-                _(
+                self.env._(
                     "You cannot reject a manufacturing request related to "
                     "done procurement orders."
                 )

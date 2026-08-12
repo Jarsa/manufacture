@@ -1,7 +1,7 @@
 # Copyright 2018-20 ForgeFlow S.L.
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
-from odoo import _, models
+from odoo import api, models
 from odoo.exceptions import UserError
 
 
@@ -33,23 +33,36 @@ class StockRule(models.Model):
         )
         for key in [
             "date_deadline",
+            "location_final_id",
+            "never_product_template_attribute_value_ids",
             "product_description_variants",
             "propagate_cancel",
             "user_id",
         ]:
-            data.pop(key)
+            data.pop(key, None)
         data["state"] = "to_approve"
         orderpoint = values.get("orderpoint_id")
         if orderpoint:
             data["orderpoint_id"] = orderpoint.id
-        procurement_group = values.get("group_id")
-        if procurement_group:
-            data["procurement_group_id"] = procurement_group.id
         data["product_tmpl_id"] = product_id.product_tmpl_id.id
+        picking_type = self.env["stock.picking.type"].browse(data["picking_type_id"])
+        if picking_type.code != "mrp_operation":
+            # Procurement diverted from a non-manufacture rule (e.g. buy):
+            # fall back to the warehouse manufacturing operation type.
+            warehouse = values.get("warehouse_id") or picking_type.warehouse_id
+            manu_type = warehouse.manu_type_id
+            data.update(
+                picking_type_id=manu_type.id,
+                location_src_id=manu_type.default_location_src_id.id,
+                location_dest_id=manu_type.default_location_dest_id.id,
+            )
         return data
 
-    def _need_production_request(self, product_id, action="manufacture"):
-        return action == "manufacture" and product_id.mrp_request
+    def _need_production_request(self, product_id):
+        self.ensure_one()
+        return self.action in ("manufacture", "buy") and (
+            product_id.mrp_request or self.route_id.mrp_request
+        )
 
     def _run_production_request(
         self,
@@ -59,21 +72,21 @@ class StockRule(models.Model):
         location_id,
         name,
         origin,
-        values,
         company_id,
+        values,
     ):
         """Trying to handle this as much similar as possible to Odoo
         production orders. See `_run_manufacture` in Odoo standard."""
         request_obj = self.env["mrp.request"]
-        request_obj_sudo = request_obj.sudo().with_company(values["company_id"].id)
+        request_obj_sudo = request_obj.sudo().with_company(company_id.id)
         bom = self._get_matching_bom(product_id, company_id, values)
         if not bom:
             raise UserError(
-                _(
+                self.env._(
                     "There is no Bill of Material found for the product %s. "
-                    "Please define a Bill of Material for this product."
+                    "Please define a Bill of Material for this product.",
+                    product_id.display_name,
                 )
-                % (product_id.display_name,)
             )
 
         # create the MR as SUPERUSER because the current user may not
@@ -101,31 +114,31 @@ class StockRule(models.Model):
             request.message_post_with_source(
                 "mail.message_origin_link",
                 render_values={"self": request, "origin": orderpoint},
-                subtype_xmlid='mail.mt_note',
+                subtype_xmlid="mail.mt_note",
             )
         if origin_production:
             request.message_post_with_source(
                 "mail.message_origin_link",
                 render_values={"self": request, "origin": origin_production},
-                subtype_xmlid='mail.mt_note',
+                subtype_xmlid="mail.mt_note",
             )
         return True
 
-    def _run_manufacture(self, procurements):
-        no_mr_procs = []
-        for procurement, _rule in procurements:
-            if self._need_production_request(procurement.product_id):
-                self._run_production_request(
-                    procurement.product_id,
-                    procurement.product_qty,
-                    procurement.product_uom,
-                    procurement.location_id,
-                    procurement.name,
-                    procurement.origin,
-                    procurement.values,
-                    procurement.company_id,
-                )
+    def _split_request_procurements(self, procurements):
+        """Divert procurements that must generate a manufacturing request."""
+        remaining_procs = []
+        for procurement, rule in procurements:
+            if rule._need_production_request(procurement.product_id):
+                rule._run_production_request(*procurement)
             else:
-                no_mr_procs.append((procurement, _rule))
+                remaining_procs.append((procurement, rule))
+        return remaining_procs
 
-        return super()._run_manufacture(no_mr_procs)
+    @api.model
+    def _run_manufacture(self, procurements):
+        return super()._run_manufacture(self._split_request_procurements(procurements))
+
+    def _run_buy(self, procurements):
+        # `_run_buy` only exists (and is only dispatched) when
+        # purchase_stock is installed.
+        return super()._run_buy(self._split_request_procurements(procurements))
