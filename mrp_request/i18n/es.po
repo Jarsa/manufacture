@@ -477,8 +477,8 @@ msgstr "Propagar cancelar y dividir"
 
 #. module: mrp_request
 #: model:ir.model.fields,field_description:mrp_request.field_mrp_request_create_mo__mo_qty
-msgid "Quantity"
-msgstr "Bulto por partida"
+msgid "Quantity to Produce"
+msgstr "Cantidad a fabricar"
 
 #. module: mrp_request
 #: model:ir.model.fields,field_description:mrp_request.field_mrp_request_create_mo_line__available_qty
