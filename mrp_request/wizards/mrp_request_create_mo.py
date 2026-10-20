@@ -19,8 +19,9 @@ class MrpProductionRequestCreateMo(models.TransientModel):
             )
         self._get_mo_qty()
         # The wizard must be reloaded in order to show the new product lines
-        action = self.env.ref("mrp_request.mrp_request_create_mo_action")
-        res = action.read()[0]
+        res = self.env["ir.actions.act_window"]._for_xml_id(
+            "mrp_request.mrp_request_create_mo_action"
+        )
         res["res_id"] = self.id
         return res
 
@@ -138,7 +139,9 @@ class MrpProductionRequestCreateMo(models.TransientModel):
                 }
             )
         # Open resulting MO:
-        action = self.env.ref("mrp.mrp_production_action").read()[0]
+        action = self.env["ir.actions.act_window"]._for_xml_id(
+            "mrp.mrp_production_action"
+        )
         res = self.env.ref("mrp.mrp_production_form_view")
         action.update(
             {"res_id": mo and mo.id, "views": [(res and res.id or False, "form")]}

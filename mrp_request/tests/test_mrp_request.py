@@ -77,6 +77,16 @@ class TestMrpRequest(TransactionCase):
             }
         )
         cls.test_user = cls.env["res.users"].create({"name": "John", "login": "test"})
+        cls.request_user = cls.env["res.users"].create(
+            {
+                "name": "Request user",
+                "login": "request_user",
+                "group_ids": [
+                    (4, cls.env.ref("mrp_request.group_mrp_request_user").id),
+                    (4, cls.env.ref("mrp.group_mrp_user").id),
+                ],
+            }
+        )
         # Products/BoMs are created while the registry is loading (at_install):
         # make sure pending values reach the DB and the cache is consistent.
         cls.env.flush_all()
@@ -137,9 +147,12 @@ class TestMrpRequest(TransactionCase):
         request.button_to_approve()
         request.button_approved()
         self.assertEqual(request.pending_qty, 4.0)
-        wiz = self.wiz_model.with_context(
-            active_ids=request.ids, active_model="mrp.request"
-        ).create({})
+        # Non-admin users cannot read ir.actions.act_window records
+        wiz = (
+            self.wiz_model.with_user(self.request_user)
+            .with_context(active_ids=request.ids, active_model="mrp.request")
+            .create({})
+        )
         wiz.compute_product_line_ids()
         self.assertTrue(wiz.product_line_ids)
         self.assertEqual(wiz.product_line_ids.bottle_neck_factor, 0.0)
@@ -148,6 +161,7 @@ class TestMrpRequest(TransactionCase):
         mo = self.production_model.search([("mrp_request_id", "=", request.id)])
         self.assertTrue(mo, "No MO created.")
         self.assertEqual(request.mrp_production_count, 1)
+        request.with_user(self.request_user).action_view_mrp_productions()
         self.assertEqual(request.pending_qty, 4.0)
         action = request.action_view_mrp_productions()
         self.assertEqual(action["res_id"], mo.id)

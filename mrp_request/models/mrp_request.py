@@ -323,8 +323,9 @@ class MrpProductionRequest(models.Model):
         return True
 
     def action_view_mrp_productions(self):
-        action = self.env.ref("mrp.mrp_production_action")
-        result = action.read()[0]
+        result = self.env["ir.actions.act_window"]._for_xml_id(
+            "mrp.mrp_production_action"
+        )
         result["context"] = {}
         mos = self.mapped("mrp_production_ids")
         # choose the view_mode accordingly
