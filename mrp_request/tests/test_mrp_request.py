@@ -1,6 +1,8 @@
 # Copyright 2017-18 ForgeFlow S.L.
 # License AGPL-3.0 or later (http://www.gnu.org/licenses/agpl).
 
+from unittest.mock import patch
+
 from odoo import fields
 from odoo.exceptions import UserError
 from odoo.tests.common import TransactionCase
@@ -298,6 +300,19 @@ class TestMrpRequest(TransactionCase):
                 [("product_id", "=", self.product_route_buy.id)]
             )
         )
+
+    def test_05_bis_extra_mo_vals(self):
+        """MO values added by other modules (e.g. sale_line_id from
+        sale_mrp) that do not exist on the request are dropped."""
+        stock_rule_cls = type(self.rule_model)
+        prepare_mo_vals = stock_rule_cls._prepare_mo_vals
+
+        def _prepare_mo_vals(rule, *args):
+            return dict(prepare_mo_vals(rule, *args), sale_line_id=1)
+
+        with patch.object(stock_rule_cls, "_prepare_mo_vals", _prepare_mo_vals):
+            self.procure(self.product)
+        self.assertEqual(len(self._get_request(self.product)), 1)
 
     def test_06_mto_chain(self):
         """MRs created to fulfill a MO keep the link with the destination
