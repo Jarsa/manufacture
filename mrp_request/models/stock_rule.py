@@ -31,15 +31,11 @@ class StockRule(models.Model):
             values,
             bom,
         )
-        for key in [
-            "date_deadline",
-            "location_final_id",
-            "never_product_template_attribute_value_ids",
-            "product_description_variants",
-            "propagate_cancel",
-            "user_id",
-        ]:
-            data.pop(key, None)
+        # Keep only the MO values that exist on the request: other modules
+        # extend the MO values (e.g. sale_line_id from sale_mrp, project_id
+        # from project_mrp) with fields the request does not have.
+        request_fields = self.env["mrp.request"]._fields
+        data = {key: value for key, value in data.items() if key in request_fields}
         data["state"] = "to_approve"
         orderpoint = values.get("orderpoint_id")
         if orderpoint:
